@@ -4,122 +4,280 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Le Voile du Manoir — Énigme Finale</title>
-<meta name="description" content="Entrez les 5 mots de passe, dans l'ordre du message de remerciement, pour lever le voile et révéler l'image finale." />
+<meta name="description" content="Trouve les 5 clés dans l'ordre pour lever le voile et révéler la photo." />
 <style>
   :root{
-    --bg:#0e0f11;
-    --panel:rgba(255,255,255,0.03);
-    --accent:#86c08a;
-    --text:#eee;
-    --muted:#bdbdbd;
+    --bg:#0e0f11; --panel:rgba(255,255,255,0.03); --accent:#86c08a;
+    --text:#eee; --muted:#bdbdbd; --ok:#55d67a; --warn:#ffba4a; --err:#ff6b6b;
   }
-  * { box-sizing: border-box; }
-  html,body{height:100%; margin:0; font-family:Inter,system-ui,Segoe UI,Arial,sans-serif; background:radial-gradient(1200px 700px at 50% -10%, #1a1b1e, #0b0c0e 70%); color:var(--text);}
-  .wrap{min-height:100%; display:flex; align-items:center; justify-content:center; padding:28px;}
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; font-family:Inter,system-ui,Segoe UI,Arial,sans-serif; background:radial-gradient(1200px 700px at 50% -10%, #1a1b1e, #0b0c0e 70%); color:var(--text)}
+  
+  .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px}
+  
+  /* Mobile-first design */
   .card{
-    width:min(1024px,96%);
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
-    border:1px solid rgba(255,255,255,0.06);
-    border-radius:16px; box-shadow:0 18px 60px rgba(0,0,0,0.55);
-    overflow:hidden; display:grid; grid-template-columns:1.1fr 0.9fr;
+    width:100%; 
+    max-width:420px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)); 
+    border:1px solid rgba(255,255,255,0.06); 
+    border-radius:16px; 
+    box-shadow:0 18px 60px rgba(0,0,0,0.55); 
+    overflow:hidden;
   }
-  .left{padding:28px 28px 22px; display:flex; flex-direction:column; gap:14px;}
-  h1{margin:0 0 4px; font-size:22px; letter-spacing:.4px}
-  .lead{margin:0; color:#d9d9d9; line-height:1.5}
-  .rules{margin:0; font-size:13px; color:var(--muted)}
-  .controls{margin-top:6px; display:flex; gap:8px; align-items:center;}
-  input[type="text"]{
-    flex:1; padding:11px 12px; border-radius:10px;
-    border:1px solid rgba(255,255,255,0.08);
-    background:rgba(255,255,255,0.03); color:var(--text); outline:none;
+  
+  .image-section{
+    position:relative;
+    height:50vh;
+    min-height:280px;
+    max-height:400px;
+    background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
   }
-  input[type="text"]::placeholder{color:#9aa0a6}
-  button{
-    padding:11px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
-    background:#313336; color:#fff; cursor:pointer;
-  }
-  button.primary{background:var(--accent); color:#08270f; font-weight:600; border-color:transparent}
-  .feedback{min-height:22px; font-size:14px; color:#d8d8d8; margin-top:6px}
-  .progressline{display:flex; gap:6px; align-items:center; margin-top:6px}
-  .pill{font-size:12px; color:#0b2b12; background:var(--accent); padding:6px 10px; border-radius:999px; font-weight:600}
-  .muted{font-size:12px; color:var(--muted)}
-  .right{background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32)); display:flex; align-items:center; justify-content:center; position:relative; padding:16px;}
+  
   .frame{
-    width:min(430px,92%); height:560px; border-radius:12px; overflow:hidden; background:#111;
-    position:relative; display:flex; align-items:center; justify-content:center;
+    width:100%; 
+    height:100%; 
+    border-radius:12px; 
+    overflow:hidden; 
+    background:#111; 
+    position:relative; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center;
   }
+  
   .frame img{
-    width:100%; height:100%; object-fit:cover; display:block;
-    transition:filter 650ms ease, transform 650ms ease; transform:scale(1.02);
+    width:100%; 
+    height:100%; 
+    object-fit:contain; 
+    display:block; 
+    transition:filter 650ms ease, transform 650ms ease; 
     filter: blur(30px) brightness(.78) contrast(.98);
   }
-  .badge{position:absolute; left:14px; top:14px; background:rgba(0,0,0,0.45); color:#fff; padding:6px 10px; border-radius:999px; font-size:13px; backdrop-filter: blur(4px)}
-  .overlay-final{
-    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.35) 65%, rgba(0,0,0,0.6) 100%);
-    color:#fff; text-align:center; padding:24px;
+  
+  .badge-top{
+    position:absolute; 
+    left:14px; 
+    top:14px; 
+    background:rgba(0,0,0,0.7); 
+    padding:6px 10px; 
+    border-radius:20px; 
+    font-size:12px; 
+    font-weight:600;
   }
-  .overlay-final .title{font-size:18px; margin-bottom:10px}
-  .overlay-final .download{margin-top:10px; padding:10px 12px; border-radius:8px; background:var(--accent); color:#08270f; font-weight:700; border:none; cursor:pointer}
-  .sep{height:1px; background:rgba(255,255,255,0.06); margin:8px 0}
-  .small{font-size:12px; color:#cfcfcf}
-  .list{margin:0; padding-left:16px}
-  .list li{margin:4px 0}
-  @media (max-width:960px){ .card{grid-template-columns:1fr} .right{order:-1} .frame{height:360px}}
+  
+  .content{padding:24px 20px}
+  
+  h1{margin:0 0 8px; font-size:20px; letter-spacing:.4px; text-align:center}
+  .lead{margin:0 0 20px; color:#d9d9d9; text-align:center; font-size:14px}
+  
+  .current-step{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:20px;
+  }
+  
+  .step-number{
+    color:var(--accent);
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:8px;
+  }
+  
+  .riddle{
+    font-size:16px;
+    line-height:1.4;
+    margin-bottom:16px;
+    color:#f5f5f5;
+  }
+  
+  .controls{display:flex; gap:8px; margin-bottom:16px}
+  
+  input[type="text"]{
+    flex:1; 
+    padding:12px 14px; 
+    border-radius:10px; 
+    border:1px solid rgba(255,255,255,0.1); 
+    background:rgba(255,255,255,0.05); 
+    color:var(--text); 
+    outline:none;
+    font-size:16px;
+  }
+  
+  input::placeholder{color:#9aa0a6}
+  input:focus{border-color:var(--accent); box-shadow:0 0 0 2px rgba(134,192,138,0.2)}
+  
+  button{
+    padding:12px 16px; 
+    border-radius:10px; 
+    border:1px solid rgba(255,255,255,0.08); 
+    background:#313336; 
+    color:#fff; 
+    cursor:pointer;
+    font-size:14px;
+    font-weight:500;
+    transition:all 0.2s ease;
+  }
+  
+  button:hover{background:#404348}
+  button:active{transform:scale(0.98)}
+  
+  button.primary{
+    background:var(--accent); 
+    color:#08270f; 
+    font-weight:600; 
+    border-color:transparent;
+  }
+  
+  button.primary:hover{background:#9cd5a0}
+  
+  .feedback{
+    min-height:40px; 
+    font-size:14px; 
+    line-height:1.4;
+    padding:8px 0;
+  }
+  
+  .ok{color:var(--ok)} 
+  .warn{color:var(--warn)} 
+  .err{color:var(--err)}
+  
+  .progress-grid{
+    display:grid; 
+    grid-template-columns:repeat(5, 1fr); 
+    gap:8px; 
+    margin:20px 0;
+  }
+  
+  .progress-item{
+    aspect-ratio:1;
+    border:2px solid rgba(255,255,255,0.1);
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:600;
+    transition:all 0.3s ease;
+  }
+  
+  .progress-item.completed{
+    background:var(--ok);
+    border-color:var(--ok);
+    color:#0a3d14;
+  }
+  
+  .progress-item.current{
+    border-color:var(--accent);
+    background:rgba(134,192,138,0.1);
+  }
+  
+  .overlay-final{
+    position:absolute; 
+    inset:0; 
+    display:none; 
+    align-items:center; 
+    justify-content:center; 
+    background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.8)); 
+    color:#fff; 
+    text-align:center; 
+    padding:24px;
+  }
+  
+  .overlay-final .title{font-size:18px; margin-bottom:10px; font-weight:600}
+  .overlay-final .subtitle{font-size:14px; color:#ccc; margin-bottom:16px}
+  .overlay-final .download{
+    padding:12px 20px; 
+    border-radius:8px; 
+    background:var(--accent); 
+    color:#08270f; 
+    font-weight:700; 
+    border:none; 
+    cursor:pointer;
+    font-size:14px;
+  }
+  
+  /* Tablet et Desktop */
+  @media (min-width:768px){
+    .wrap{padding:28px}
+    .card{
+      max-width:900px;
+      display:grid;
+      grid-template-columns:1fr 1.2fr;
+    }
+    .image-section{height:auto; min-height:500px}
+    .content{padding:32px 28px}
+    h1{font-size:24px; text-align:left}
+    .lead{text-align:left; font-size:15px}
+    .riddle{font-size:17px}
+  }
+  
+  @media (min-width:1024px){
+    .card{max-width:1100px}
+    .content{padding:36px 32px}
+  }
+  
+  /* Amélioration tactile */
+  @media (hover: none) and (pointer: coarse) {
+    button, input{min-height:44px}
+    .frame{touch-action:none}
+  }
+  
+  /* Animation d'erreur plus douce */
+  .shake{
+    animation:shake 0.4s ease-in-out;
+  }
+  
+  @keyframes shake{
+    0%, 100%{transform:translateX(0)}
+    25%{transform:translateX(-4px)}
+    75%{transform:translateX(4px)}
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card" role="main" aria-labelledby="title">
-      <div class="left">
-        <h1 id="title">Le Voile du Manoir — Énigme Finale</h1>
-        <p class="lead">
-          Le message de remerciement contient <strong>cinq clés</strong>. Entrez-les <em>dans l’ordre</em> pour lever le voile et révéler l’image finale.
-        </p>
-        <p class="rules">
-          Format attendu : tout en minuscules, sans accent ni espace. Les clés sont des mots exacts tirés du texte (ex. <code>souffle</code>).
-        </p>
-
-        <div class="controls" aria-live="polite">
-          <input id="pwd" autocomplete="off" spellcheck="false" placeholder="Entrez le mot de passe…" />
-          <button id="tryBtn">Essayer</button>
-          <button id="hintBtn" class="primary">Indice</button>
-        </div>
-
-        <div class="feedback" id="feedback">Trouvez la clé 1/5 dans la première ligne du message.</div>
-
-        <div class="progressline">
-          <span class="pill" id="pill">Clé 1/5</span>
-          <span class="muted">Chaque bonne clé réduit le flou jusqu'à la révélation complète.</span>
-        </div>
-
-        <div class="sep"></div>
-        <div class="small">
-          <details>
-            <summary>Rappel — Message de remerciement</summary>
-            <ul class="list">
-              <li>Ben, Gary & Dracula — un seul souffle noir pour trois mercis.</li>
-              <li>Merci d’avoir joué le jeu, d’avoir répondu aux appels des ténèbres et d’avoir illuminé nos journées de vos rires.</li>
-              <li>Vous nous avez offert de vrais beaux moments. On a appris à vous connaître un peu plus — et quel délicieux mélange de douceur, de piquant et de folie vous formez.</li>
-              <li>Chaque défi, chaque rire, chaque moment passé ensemble a laissé une trace, douce ou piquante, sur les murs du Manoir.</li>
-              <li>Mais le jeu n’est pas encore tout à fait terminé. Car c’est en résolvant cette ultime énigme que vous lèverez enfin le voile. Oui, c’est ici que vous découvrirez qui se cache dans l’ombre, qui murmure encore entre les murs, qui berce le rire et l’effroi.</li>
-              <li>Avec une gorgée d’émotion et un soupçon de sang-froid, — Ben, Gary & Dracula 🩸</li>
-            </ul>
-          </details>
-        </div>
-      </div>
-
-      <div class="right">
+      
+      <div class="image-section">
         <div class="frame" aria-hidden="false">
-          <div class="badge">Voile : <span id="stage">5/5</span></div>
-          <!-- ⚠️ Place ton image dans le même dossier et vérifie le nom -->
+          <div class="badge-top">Voile : <span id="stage">5/5</span></div>
           <img id="revealImg" src="./dracula_revelation.png" alt="Le visage caché du Manoir" />
           <div class="overlay-final" id="finalOverlay" aria-hidden="true">
             <div>
-              <div class="title">La vérité est là. Le voile est tombé.</div>
-              <button class="download" id="dlBtn" type="button">Télécharger l’image</button>
+              <div class="title">✅ Révélation complète !</div>
+              <div class="subtitle">Le mystère du Manoir est enfin dévoilé...</div>
+              <button class="download" id="dlBtn" type="button">Télécharger l'image</button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1 id="title">Le Voile du Manoir</h1>
+
+        <div class="current-step" id="currentStep">
+          <div class="step-number" id="stepNumber">Mot 1/5</div>
+          <div class="riddle" id="currentRiddle">Premier mot recherché dans le message...</div>
+        </div>
+
+        <div class="controls" aria-live="polite">
+          <input id="pwd" autocomplete="off" spellcheck="false" placeholder="Mot du message de  Gary, Ben et Dracula..." />
+          <button id="tryBtn" class="primary">Valider</button>
+        </div>
+        
+        <button id="hintBtn" style="width:100%; margin-bottom:16px; background:rgba(255,255,255,0.05)">Afficher l'indice</button>
+        
+        <div id="feedback" class="feedback">Cherchez le premier mot dans le message de  Gary, Ben et Dracula que vous avez lu.</div>
+
+        <div class="progress-grid" id="progressGrid">
+          <!-- Généré par JS -->
         </div>
       </div>
 
@@ -128,132 +286,197 @@
 
 <script>
 (function(){
-  // Les 5 clés, dans l'ordre du texte
-  const TARGETS = ['souffle','rire','trace','voile','ombre'];
-  const HINTS = [
-    "Cherche dans l’ouverture : « un seul souffle noir… »",
-    "Dans la phrase des rires et des journées illuminées.",
-    "Là où le Manoir garde mémoire de vous : la…",
-    "Ce qui se lève quand la vérité approche.",
-    "L’ultime refuge de Dracula."
+  // 5 mots à trouver dans le texte de remerciement + indices optionnels
+  const STEPS = [
+    { 
+      key:'souffle',
+      hint:'💡 Indice : Je suis invisible, mais je fais danser les flammes...'
+    },
+    { 
+      key:'rire',
+      hint:'💡 Indice : On ne m\'entend pas mais on me partage, j\'éclate de joie...'
+    },
+    { 
+      key:'trace',
+      hint:'💡 Indice : Je reste quand tout est passé, je marque les murs...'
+    },
+    { 
+      key:'voile',
+      hint:'💡 Indice : Je cache la vérité, on me lève pour voir...'
+    },
+    { 
+      key:'ombre',
+      hint:'💡 Indice : Je nais de la lumière mais m\'y cache...'
+    }
   ];
 
-  const MAX_STAGE = TARGETS.length; // 5
-  let stage = MAX_STAGE;            // 5 → 0
+  const MAX_STAGE = STEPS.length;
+  let stage = MAX_STAGE;
   const img = document.getElementById('revealImg');
   const stageLabel = document.getElementById('stage');
-  const pill = document.getElementById('pill');
   const feedback = document.getElementById('feedback');
   const input = document.getElementById('pwd');
   const tryBtn = document.getElementById('tryBtn');
   const hintBtn = document.getElementById('hintBtn');
   const overlay = document.getElementById('finalOverlay');
   const dlBtn = document.getElementById('dlBtn');
+  const stepNumber = document.getElementById('stepNumber');
+  const currentRiddle = document.getElementById('currentRiddle');
+  const progressGrid = document.getElementById('progressGrid');
 
-  // Niveaux de flou (px) selon le stage (index = stage courant)
+  // Niveaux de flou selon le stage
   const blurLevels = [0, 6, 12, 18, 24, 30];
 
-  // Init
-  updateVisual();
-  updateUI();
+  // Initialisation
+  init();
 
-  // Handler bouton "Essayer"
+  function init(){
+    // Créer la grille de progression
+    for(let i = 0; i < STEPS.length; i++){
+      const item = document.createElement('div');
+      item.className = 'progress-item';
+      item.textContent = i + 1;
+      item.id = 'progress_' + i;
+      progressGrid.appendChild(item);
+    }
+    
+    updateVisual();
+    updateUI();
+    input.focus();
+  }
+
+  // Événements
   tryBtn.addEventListener('click', onTry);
-  input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ onTry(); }});
-
-  // Handler indice
-  hintBtn.addEventListener('click', ()=>{
-    const idx = TARGETS.length - stage; // prochaine clé attendue
-    const safeIdx = Math.max(0, Math.min(HINTS.length - 1, idx));
-    feedback.textContent = "Indice : " + HINTS[safeIdx];
+  input.addEventListener('keydown', (e)=>{ 
+    if(e.key === 'Enter'){ 
+      onTry(); 
+    }
   });
 
-  // Téléchargement de l'image révélée
+  hintBtn.addEventListener('click', ()=>{
+    const currentIndex = STEPS.length - stage;
+    if(currentIndex < STEPS.length){
+      feedback.innerHTML = `<span class="warn">${STEPS[currentIndex].hint}</span>`;
+    }
+  });
+
+  // Téléchargement
   dlBtn.addEventListener('click', ()=>{
     const a = document.createElement('a');
-    a.href = img.currentSrc || img.src;
+    a.href = img.currentSrc || img.src; 
     a.download = 'revelation_dracula.png';
-    document.body.appendChild(a);
-    a.click();
+    document.body.appendChild(a); 
+    a.click(); 
     a.remove();
   });
 
-  // Gestion de l'image introuvable
+  // Gestion erreur image
   img.addEventListener('error', ()=>{
     const warn = document.createElement('div');
-    warn.style.cssText = "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1acc;color:#fff;padding:20px;text-align:center";
-    warn.textContent = "Image introuvable : place 'dracula_revelation.png' dans le même dossier que 'revelation.html' (nom et extension EXACTS).";
+    warn.style.cssText="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1acc;color:#fff;padding:20px;text-align:center;font-size:14px;line-height:1.4";
+    warn.innerHTML="⚠️ Image introuvable<br>Placez 'dracula_revelation.png' dans le même dossier";
     img.closest('.frame').appendChild(warn);
   });
 
   function onTry(){
     const raw = input.value;
     const val = normalize(raw);
-    input.value = '';
-    input.focus();
+    input.value='';
 
-    // prochaine clé attendue
-    const expectedIndex = TARGETS.length - stage;
-    const expected = TARGETS[expectedIndex];
+    const expectedIndex = STEPS.length - stage;
+    const expected = STEPS[expectedIndex]?.key;
 
-    if(!val){
-      feedback.textContent = "Entrez d’abord un mot.";
-      return;
+    if(!val){ 
+      feedback.innerHTML = `<span class="warn">⚠️ Entrez votre réponse d'abord.</span>`; 
+      return; 
+    }
+    
+    if(!expected){ 
+      feedback.textContent = "Tout est déjà révélé."; 
+      return; 
     }
 
     if(val === expected){
-      if(stage > 0){
-        stage--; // on lève un cran
-        updateVisual();
-        updateUI();
-        if(stage === 0){
-          feedback.textContent = "Parfait. La vérité est révélée.";
-          overlay.style.display = "flex";
-        } else {
-          const rest = stage;
-          feedback.textContent = `Bien joué. Il reste ${rest} clé${rest>1?'s':''} à trouver.`;
-        }
+      markCompleted(expectedIndex);
+      if(stage > 0){ stage--; }
+      updateVisual(); 
+      updateUI();
+
+      if(stage === 0){
+        feedback.innerHTML = `<span class="ok">✅ <strong>Parfait !</strong> Tous les mots trouvés !</span>`;
+        overlay.style.display = "flex";
+        // Animation finale
+        setTimeout(() => {
+          img.style.transform = 'scale(1)';
+        }, 300);
       } else {
-        feedback.textContent = "La photo est déjà totalement révélée.";
+        feedback.innerHTML = `<span class="ok">✅ <strong>Correct !</strong> Mot ${expectedIndex+1}/5 trouvé : "${expected}"</span>`;
       }
     } else {
-      feedback.textContent = "Rien ne bouge. Ce n’est pas la bonne clé.";
-      // petit shake dramatique
-      document.querySelector('.card').animate(
-        [{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],
-        {duration:420, iterations:1}
-      );
+      feedback.innerHTML = `<span class="err">❌ Mauvaise réponse. Réessayez !</span>`;
+      document.querySelector('.card').classList.add('shake');
+      setTimeout(() => {
+        document.querySelector('.card').classList.remove('shake');
+      }, 400);
+    }
+    
+    // Focus pour mobile
+    if(stage > 0){
+      setTimeout(() => input.focus(), 100);
+    }
+  }
+
+  function markCompleted(index){
+    const item = document.getElementById('progress_' + index);
+    if(item) {
+      item.classList.add('completed');
+      item.textContent = '✓';
     }
   }
 
   function updateVisual(){
-    // clamp
     if(stage < 0) stage = 0;
     if(stage > MAX_STAGE) stage = MAX_STAGE;
-
+    
     const blur = blurLevels[stage] ?? 0;
-    const bright = 0.78 + (MAX_STAGE - stage) * 0.04; // petit éclaircissement progressif
+    const bright = 0.78 + (MAX_STAGE - stage) * 0.04;
+    
     img.style.filter = `blur(${blur}px) brightness(${bright}) contrast(.98)`;
     stageLabel.textContent = `${stage}/${MAX_STAGE}`;
+    
     overlay.style.display = (stage === 0) ? "flex" : "none";
   }
 
   function updateUI(){
-    const nextIndex = TARGETS.length - stage;
-    const nextHuman = Math.min(nextIndex + 1, TARGETS.length);
-    pill.textContent = `Clé ${nextHuman}/${TARGETS.length}`;
-    if(stage > 0){
-      // prochaine clé à deviner → hint léger
-      feedback.textContent = `Trouvez la clé ${nextHuman}/${TARGETS.length} dans l’ordre du message.`;
+    const nextIndex = STEPS.length - stage;
+    
+    if(stage === 0){
+      // Jeu terminé - masquer les contrôles
+      document.querySelector('.current-step').style.display = 'none';
+      document.querySelector('.controls').style.display = 'none';
+      hintBtn.style.display = 'none';
+      return;
+    }
+    
+    if(nextIndex < STEPS.length){
+      stepNumber.textContent = `Mot ${nextIndex + 1}/${STEPS.length}`;
+      currentRiddle.textContent = `Cherchez le mot n°${nextIndex + 1} dans le message de  Gary, Ben et Dracula...`;
+      
+      // Mise à jour des indicateurs de progression
+      for(let i = 0; i < STEPS.length; i++){
+        const item = document.getElementById('progress_' + i);
+        if(!item) continue;
+        
+        item.classList.remove('current');
+        if(i === nextIndex && stage > 0){
+          item.classList.add('current');
+        }
+      }
     }
   }
 
-  // normalisation basique
   function normalize(s){
-    return (s || '')
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g,''); // aucun espace autorisé
+    return (s||'').toLowerCase().trim().replace(/\s+/g,'');
   }
 })();
 </script>
