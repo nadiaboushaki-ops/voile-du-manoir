@@ -9,11 +9,12 @@
   :root{
     --bg:#0e0f11; --panel:rgba(255,255,255,0.03); --accent:#86c08a;
     --text:#eee; --muted:#bdbdbd; --ok:#55d67a; --warn:#ffba4a; --err:#ff6b6b;
+    --purple: #9d4edd; --gold: #f1c40f;
   }
   *{box-sizing:border-box}
-  html,body{height:100%; margin:0; font-family:Inter,system-ui,Segoe UI,Arial,sans-serif; background:radial-gradient(1200px 700px at 50% -10%, #1a1b1e, #0b0c0e 70%); color:var(--text)}
+  html,body{height:100%; margin:0; font-family:Inter,system-ui,Segoe UI,Arial,sans-serif; background:radial-gradient(1200px 700px at 50% -10%, #1a1b1e, #0b0c0e 70%); color:var(--text); overflow-x:hidden}
   
-  .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px}
+  .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:12px}
   
   /* Mobile-first design */
   .card{
@@ -21,16 +22,33 @@
     max-width:420px;
     background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)); 
     border:1px solid rgba(255,255,255,0.06); 
-    border-radius:16px; 
-    box-shadow:0 18px 60px rgba(0,0,0,0.55); 
+    border-radius:20px; 
+    box-shadow:0 25px 80px rgba(0,0,0,0.6); 
     overflow:hidden;
+    position: relative;
+  }
+  
+  .spooky-border {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: linear-gradient(45deg, var(--purple), var(--gold), var(--accent), var(--purple));
+    background-size: 400% 400%;
+    animation: borderGlow 3s ease-in-out infinite;
+    z-index: -1;
+    opacity: 0.3;
+  }
+  
+  @keyframes borderGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
   
   .image-section{
     position:relative;
-    height:50vh;
-    min-height:280px;
-    max-height:400px;
+    height:60vh;
+    min-height:300px;
+    max-height:500px;
     background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32));
     display:flex;
     align-items:center;
@@ -41,13 +59,14 @@
   .frame{
     width:100%; 
     height:100%; 
-    border-radius:12px; 
+    border-radius:16px; 
     overflow:hidden; 
     background:#111; 
     position:relative; 
     display:flex; 
     align-items:center; 
     justify-content:center;
+    border: 2px solid rgba(255,255,255,0.1);
   }
   
   .frame img{
@@ -55,152 +74,296 @@
     height:100%; 
     object-fit:contain; 
     display:block; 
-    transition:filter 650ms ease, transform 650ms ease; 
-    filter: blur(30px) brightness(.78) contrast(.98);
+    transition:filter 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1); 
+    filter: blur(30px) brightness(.6) contrast(.9) sepia(.3);
   }
   
-  .badge-top{
+  .frame img.revealed{
+    object-fit:contain !important;
+    width:100% !important;
+    height:100% !important;
+    filter:none !important;
+    transform:none !important;
+    transition:none !important;
+    opacity:1 !important;
+    -webkit-filter:none !important;
+  }
+  
+  .veil-counter{
     position:absolute; 
-    left:14px; 
-    top:14px; 
-    background:rgba(0,0,0,0.7); 
-    padding:6px 10px; 
-    border-radius:20px; 
+    right:16px; 
+    top:16px; 
+    background:rgba(0,0,0,0.8); 
+    padding:8px 12px; 
+    border-radius:25px; 
+    font-size:13px; 
+    font-weight:700;
+    color: var(--gold);
+    border: 1px solid rgba(241, 196, 15, 0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  
+  .mystery-badge {
+    position:absolute; 
+    left:16px; 
+    top:16px; 
+    background:linear-gradient(135deg, var(--purple), #6a1b9a); 
+    padding:8px 12px; 
+    border-radius:25px; 
     font-size:12px; 
     font-weight:600;
+    color: white;
+    box-shadow: 0 4px 12px rgba(157, 78, 221, 0.4);
+    animation: pulse 2s ease-in-out infinite;
   }
   
-  .content{padding:24px 20px}
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+  }
   
-  h1{margin:0 0 8px; font-size:20px; letter-spacing:.4px; text-align:center}
-  .lead{margin:0 0 20px; color:#d9d9d9; text-align:center; font-size:14px}
+  .content{padding:24px 20px 28px}
+  
+  h1{margin:0 0 12px; font-size:22px; letter-spacing:.5px; text-align:center; color: var(--gold); text-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);}
+  .lead{margin:0 0 24px; color:#d9d9d9; text-align:center; font-size:15px; line-height: 1.4;}
   
   .current-step{
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:20px;
+    background:linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(106, 27, 154, 0.05));
+    border:1px solid rgba(157, 78, 221, 0.3);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:24px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .current-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--gold), var(--accent));
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
   
   .step-number{
-    color:var(--accent);
-    font-weight:600;
-    font-size:14px;
-    margin-bottom:8px;
+    color:var(--gold);
+    font-weight:700;
+    font-size:15px;
+    margin-bottom:10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .step-number::before {
+    content: '🔍';
+    font-size: 16px;
   }
   
   .riddle{
-    font-size:16px;
-    line-height:1.4;
-    margin-bottom:16px;
-    color:#f5f5f5;
+    font-size:17px;
+    line-height:1.5;
+    margin-bottom:0;
+    color:#f8f8f8;
+    font-weight: 500;
   }
   
-  .controls{display:flex; gap:8px; margin-bottom:16px}
+  .controls{display:flex; gap:10px; margin-bottom:20px}
   
   input[type="text"]{
     flex:1; 
-    padding:12px 14px; 
-    border-radius:10px; 
-    border:1px solid rgba(255,255,255,0.1); 
+    padding:16px 18px; 
+    border-radius:14px; 
+    border:2px solid rgba(255,255,255,0.1); 
     background:rgba(255,255,255,0.05); 
     color:var(--text); 
     outline:none;
     font-size:16px;
+    transition: all 0.3s ease;
   }
   
-  input::placeholder{color:#9aa0a6}
-  input:focus{border-color:var(--accent); box-shadow:0 0 0 2px rgba(134,192,138,0.2)}
+  input::placeholder{color:#9aa0a6; font-style: italic;}
+  input:focus{
+    border-color:var(--accent); 
+    box-shadow:0 0 0 3px rgba(134,192,138,0.2);
+    background:rgba(255,255,255,0.08);
+  }
   
   button{
-    padding:12px 16px; 
-    border-radius:10px; 
-    border:1px solid rgba(255,255,255,0.08); 
+    padding:16px 20px; 
+    border-radius:14px; 
+    border:2px solid rgba(255,255,255,0.08); 
     background:#313336; 
     color:#fff; 
     cursor:pointer;
-    font-size:14px;
-    font-weight:500;
-    transition:all 0.2s ease;
+    font-size:15px;
+    font-weight:600;
+    transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
   }
   
-  button:hover{background:#404348}
-  button:active{transform:scale(0.98)}
+  button:hover{background:#404348; transform: translateY(-2px);}
+  button:active{transform: translateY(0) scale(0.98)}
   
   button.primary{
-    background:var(--accent); 
+    background:linear-gradient(135deg, var(--accent), #9cd5a0); 
     color:#08270f; 
-    font-weight:600; 
+    font-weight:700; 
     border-color:transparent;
+    box-shadow: 0 6px 20px rgba(134, 192, 138, 0.3);
   }
   
-  button.primary:hover{background:#9cd5a0}
+  button.primary:hover{
+    background:linear-gradient(135deg, #9cd5a0, var(--accent));
+    box-shadow: 0 8px 25px rgba(134, 192, 138, 0.4);
+  }
   
   .feedback{
-    min-height:40px; 
-    font-size:14px; 
-    line-height:1.4;
-    padding:8px 0;
+    min-height:50px; 
+    font-size:15px; 
+    line-height:1.5;
+    padding:12px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-weight: 500;
   }
   
-  .ok{color:var(--ok)} 
-  .warn{color:var(--warn)} 
-  .err{color:var(--err)}
+  .ok{
+    color:var(--ok); 
+    background: rgba(85, 214, 122, 0.1);
+    border: 1px solid rgba(85, 214, 122, 0.3);
+  } 
+  .warn{
+    color:var(--warn);
+    background: rgba(255, 186, 74, 0.1);
+    border: 1px solid rgba(255, 186, 74, 0.3);
+  } 
+  .err{
+    color:var(--err);
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+  }
+  
+  .progress-container {
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .progress-title {
+    text-align: center;
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
   
   .progress-grid{
     display:grid; 
     grid-template-columns:repeat(5, 1fr); 
-    gap:8px; 
-    margin:20px 0;
+    gap:10px; 
   }
   
   .progress-item{
     aspect-ratio:1;
-    border:2px solid rgba(255,255,255,0.1);
-    border-radius:8px;
+    border:2px solid rgba(255,255,255,0.15);
+    border-radius:12px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:12px;
-    font-weight:600;
-    transition:all 0.3s ease;
+    font-size:14px;
+    font-weight:700;
+    transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .progress-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
   }
   
   .progress-item.completed{
-    background:var(--ok);
+    background:linear-gradient(135deg, var(--ok), #4ade80);
     border-color:var(--ok);
     color:#0a3d14;
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(85, 214, 122, 0.4);
+  }
+  
+  .progress-item.completed::before {
+    transform: translateX(100%);
   }
   
   .progress-item.current{
     border-color:var(--accent);
-    background:rgba(134,192,138,0.1);
+    background:rgba(134,192,138,0.2);
+    transform: scale(1.05);
+    animation: currentGlow 2s ease-in-out infinite;
+  }
+  
+  @keyframes currentGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(134,192,138,0.3); }
+    50% { box-shadow: 0 0 20px rgba(134,192,138,0.6); }
   }
   
   .overlay-final{
-    position:absolute; 
-    inset:0; 
-    display:none; 
-    align-items:center; 
-    justify-content:center; 
-    background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.8)); 
-    color:#fff; 
-    text-align:center; 
-    padding:24px;
-  }
+  position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+  /* pas de blur ici sinon ça floute l'image finale ! */
+  /* backdrop-filter: blur(2px);  <-- SUPPRIMÉ */
+  background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.85));
+  color:#fff; text-align:center; padding:24px;
+}
+
   
-  .overlay-final .title{font-size:18px; margin-bottom:10px; font-weight:600}
-  .overlay-final .subtitle{font-size:14px; color:#ccc; margin-bottom:16px}
+  .overlay-final .title{
+    font-size:20px; 
+    margin-bottom:12px; 
+    font-weight:700;
+    color: var(--gold);
+    text-shadow: 0 2px 10px rgba(241, 196, 15, 0.5);
+  }
+  .overlay-final .subtitle{
+    font-size:15px; 
+    color:#ddd; 
+    margin-bottom:20px;
+    line-height: 1.4;
+  }
   .overlay-final .download{
-    padding:12px 20px; 
-    border-radius:8px; 
-    background:var(--accent); 
+    padding:14px 24px; 
+    border-radius:12px; 
+    background:linear-gradient(135deg, var(--accent), #9cd5a0); 
     color:#08270f; 
-    font-weight:700; 
+    font-weight:800; 
     border:none; 
     cursor:pointer;
-    font-size:14px;
+    font-size:15px;
+    box-shadow: 0 6px 20px rgba(134, 192, 138, 0.4);
+    transition: all 0.3s ease;
+  }
+  
+  .overlay-final .download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(134, 192, 138, 0.5);
   }
   
   /* Tablet et Desktop */
@@ -212,72 +375,106 @@
       grid-template-columns:1fr 1.2fr;
     }
     .image-section{height:auto; min-height:500px}
-    .content{padding:32px 28px}
-    h1{font-size:24px; text-align:left}
-    .lead{text-align:left; font-size:15px}
-    .riddle{font-size:17px}
+    .content{padding:36px 32px}
+    h1{font-size:26px; text-align:left}
+    .lead{text-align:left; font-size:16px}
+    .riddle{font-size:18px}
   }
   
   @media (min-width:1024px){
     .card{max-width:1100px}
-    .content{padding:36px 32px}
+    .content{padding:40px 36px}
   }
   
   /* Amélioration tactile */
   @media (hover: none) and (pointer: coarse) {
-    button, input{min-height:44px}
+    button, input{min-height:48px}
     .frame{touch-action:none}
+    .progress-item{min-height:48px}
   }
   
-  /* Animation d'erreur plus douce */
+  /* Animation d'erreur plus fun */
   .shake{
-    animation:shake 0.4s ease-in-out;
+    animation:spookyShake 0.6s ease-in-out;
   }
   
-  @keyframes shake{
-    0%, 100%{transform:translateX(0)}
-    25%{transform:translateX(-4px)}
-    75%{transform:translateX(4px)}
+  @keyframes spookyShake{
+    0%, 100%{transform:translateX(0) rotate(0deg)}
+    20%{transform:translateX(-8px) rotate(-1deg)}
+    40%{transform:translateX(8px) rotate(1deg)}
+    60%{transform:translateX(-6px) rotate(-0.5deg)}
+    80%{transform:translateX(6px) rotate(0.5deg)}
+  }
+  
+  /* Effet de particules */
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 3s linear infinite;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100px) rotate(360deg);
+      opacity: 0;
+    }
   }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card" role="main" aria-labelledby="title">
+      <div class="spooky-border"></div>
       
       <div class="image-section">
         <div class="frame" aria-hidden="false">
-          <div class="badge-top">Voile : <span id="stage">5/5</span></div>
+          <div class="mystery-badge">🎭 Mystère</div>
+          <div class="veil-counter">Voiles: <span id="stage">5/5</span></div>
           <img id="revealImg" src="./dracula_revelation.png" alt="Le visage caché du Manoir" />
           <div class="overlay-final" id="finalOverlay" aria-hidden="true">
             <div>
-              <div class="title">✅ Révélation complète !</div>
-              <div class="subtitle">Le mystère du Manoir est enfin dévoilé...</div>
-              <button class="download" id="dlBtn" type="button">Télécharger l'image</button>
+              <div class="title">🎉 Révélation complète !</div>
+              <button class="download" id="dlBtn" type="button">📥 Télécharger votre trophée</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="content">
-        <h1 id="title">Le Voile du Manoir</h1>
+        <h1 id="title">🏰 Le Voile du Manoir</h1>
+        <p class="lead">Trouvez les 5 mots cachés dans le message de remerciement pour lever le voile mystérieux...</p>
 
         <div class="current-step" id="currentStep">
-          <div class="step-number" id="stepNumber">Mot 1/5</div>
-          <div class="riddle" id="currentRiddle">Premier mot recherché dans le message...</div>
+          <div class="step-number" id="stepNumber">Clé 1/5</div>
+          <div class="riddle" id="currentRiddle">Cherchez le premier mot dans le message de Gary, Ben et Dracula...</div>
         </div>
 
         <div class="controls" aria-live="polite">
-          <input id="pwd" autocomplete="off" spellcheck="false" placeholder="Mot du message de  Gary, Ben et Dracula..." />
-          <button id="tryBtn" class="primary">Valider</button>
+          <input id="pwd" autocomplete="off" spellcheck="false" placeholder="Entrez votre réponse..." />
+          <button id="tryBtn" class="primary">🔮 Révéler</button>
         </div>
         
-        <button id="hintBtn" style="width:100%; margin-bottom:16px; background:rgba(255,255,255,0.05)">Afficher l'indice</button>
-        
-        <div id="feedback" class="feedback">Cherchez le premier mot dans le message de  Gary, Ben et Dracula que vous avez lu.</div>
+        <div id="feedback" class="feedback">Lisez attentivement le message de remerciement pour trouver le premier mot !</div>
 
-        <div class="progress-grid" id="progressGrid">
-          <!-- Généré par JS -->
+        <div class="progress-container">
+          <div class="progress-title">🗝️ Progression des Clés</div>
+          <div class="progress-grid" id="progressGrid">
+            <!-- Généré par JS -->
+          </div>
         </div>
       </div>
 
@@ -286,28 +483,13 @@
 
 <script>
 (function(){
-  // 5 mots à trouver dans le texte de remerciement + indices optionnels
+  // 5 mots à trouver dans le texte de remerciement
   const STEPS = [
-    { 
-      key:'souffle',
-      hint:'💡 Indice : Je suis invisible, mais je fais danser les flammes...'
-    },
-    { 
-      key:'rire',
-      hint:'💡 Indice : On ne m\'entend pas mais on me partage, j\'éclate de joie...'
-    },
-    { 
-      key:'trace',
-      hint:'💡 Indice : Je reste quand tout est passé, je marque les murs...'
-    },
-    { 
-      key:'voile',
-      hint:'💡 Indice : Je cache la vérité, on me lève pour voir...'
-    },
-    { 
-      key:'ombre',
-      hint:'💡 Indice : Je nais de la lumière mais m\'y cache...'
-    }
+    { key:'souffle' },
+    { key:'rire' },
+    { key:'trace' },
+    { key:'voile' },
+    { key:'ombre' }
   ];
 
   const MAX_STAGE = STEPS.length;
@@ -317,15 +499,23 @@
   const feedback = document.getElementById('feedback');
   const input = document.getElementById('pwd');
   const tryBtn = document.getElementById('tryBtn');
-  const hintBtn = document.getElementById('hintBtn');
   const overlay = document.getElementById('finalOverlay');
   const dlBtn = document.getElementById('dlBtn');
   const stepNumber = document.getElementById('stepNumber');
   const currentRiddle = document.getElementById('currentRiddle');
   const progressGrid = document.getElementById('progressGrid');
 
-  // Niveaux de flou selon le stage
-  const blurLevels = [0, 6, 12, 18, 24, 30];
+  // Niveaux de flou selon le stage - plus dramatique
+  const blurLevels = [0, 8, 16, 24, 32, 40];
+  
+  // Messages plus immersifs
+  const stageMessages = [
+    "Cherchez le premier mot dans le message de Gary, Ben et Dracula...",
+    "Le deuxième mot vous attend dans leurs remerciements...",
+    "Continuez votre quête, le troisième mot se cache...",
+    "Presque là ! Le quatrième mot attend d'être découvert...",
+    "Dernière étape ! Le cinquième mot révélera tout..."
+  ];
 
   // Initialisation
   init();
@@ -340,9 +530,29 @@
       progressGrid.appendChild(item);
     }
     
+    // Ajouter des particules d'ambiance
+    createParticles();
+    
     updateVisual();
     updateUI();
     input.focus();
+  }
+
+  function createParticles() {
+    for(let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 3 + 's';
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 3000);
+      }, i * 1000);
+    }
+    
+    // Relancer les particules
+    setTimeout(createParticles, 15000);
   }
 
   // Événements
@@ -353,27 +563,26 @@
     }
   });
 
-  hintBtn.addEventListener('click', ()=>{
-    const currentIndex = STEPS.length - stage;
-    if(currentIndex < STEPS.length){
-      feedback.innerHTML = `<span class="warn">${STEPS[currentIndex].hint}</span>`;
-    }
-  });
-
   // Téléchargement
   dlBtn.addEventListener('click', ()=>{
     const a = document.createElement('a');
     a.href = img.currentSrc || img.src; 
-    a.download = 'revelation_dracula.png';
+    a.download = 'dracula_revelation_trophee.png';
     document.body.appendChild(a); 
     a.click(); 
     a.remove();
+    
+    // Petit feedback
+    dlBtn.textContent = '✅ Téléchargé !';
+    setTimeout(() => {
+      dlBtn.textContent = '📥 Télécharger votre trophée';
+    }, 2000);
   });
 
   // Gestion erreur image
   img.addEventListener('error', ()=>{
     const warn = document.createElement('div');
-    warn.style.cssText="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1acc;color:#fff;padding:20px;text-align:center;font-size:14px;line-height:1.4";
+    warn.style.cssText="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1acc;color:#fff;padding:20px;text-align:center;font-size:14px;line-height:1.4;border-radius:16px";
     warn.innerHTML="⚠️ Image introuvable<br>Placez 'dracula_revelation.png' dans le même dossier";
     img.closest('.frame').appendChild(warn);
   });
@@ -387,12 +596,14 @@
     const expected = STEPS[expectedIndex]?.key;
 
     if(!val){ 
-      feedback.innerHTML = `<span class="warn">⚠️ Entrez votre réponse d'abord.</span>`; 
+      feedback.innerHTML = `<span class="warn">🤔 Entrez votre réponse d'abord, petit monstre !</span>`; 
+      feedback.className = 'feedback warn';
       return; 
     }
     
     if(!expected){ 
-      feedback.textContent = "Tout est déjà révélé."; 
+      feedback.innerHTML = `<span class="ok">🎉 Tout est déjà révélé ! Bravo !</span>`;
+      feedback.className = 'feedback ok';
       return; 
     }
 
@@ -403,21 +614,57 @@
       updateUI();
 
       if(stage === 0){
-        feedback.innerHTML = `<span class="ok">✅ <strong>Parfait !</strong> Tous les mots trouvés !</span>`;
+        feedback.innerHTML = `<span class="ok">✨ <strong>Extraordinaire !</strong> Tous les mots trouvés ! Le mystère est résolu ! 🎭</span>`;
+        feedback.className = 'feedback ok';
         overlay.style.display = "flex";
-        // Animation finale
+        
+        // Animation finale dramatique - image complètement claire
         setTimeout(() => {
-          img.style.transform = 'scale(1)';
+          img.removeAttribute('style'); // Supprimer TOUS les styles inline
+          img.classList.add('revealed'); // Appliquer la classe finale
+        }, 500);
+        
+        // Confettis virtuels
+        createCelebration();
+        
+        // Scroll vers l'image pour voir la révélation finale
+        setTimeout(() => {
+          document.querySelector('.image-section').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
         }, 300);
       } else {
-        feedback.innerHTML = `<span class="ok">✅ <strong>Correct !</strong> Mot ${expectedIndex+1}/5 trouvé : "${expected}"</span>`;
+        const remaining = stage;
+        feedback.innerHTML = `<span class="ok">🔓 <strong>Parfait !</strong> <span style="color: white; font-weight: bold;">"${expected}"</span> trouvé ! Plus que ${remaining} voile${remaining > 1 ? 's' : ''} à lever... 🌟</span>`;
+        feedback.className = 'feedback ok';
+        
+        // Scroll vers l'image pour voir le voile se lever
+        setTimeout(() => {
+          document.querySelector('.image-section').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }, 300);
+        
+        // Retour au formulaire après avoir vu l'effet
+        setTimeout(() => {
+          document.querySelector('.current-step').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          input.focus();
+        }, 2000);
       }
     } else {
-      feedback.innerHTML = `<span class="err">❌ Mauvaise réponse. Réessayez !</span>`;
+      feedback.innerHTML = `<span class="err">❌ Ce n'est pas le bon mot... Relisez le message de remerciement ! 🔍</span>`;
+      feedback.className = 'feedback err';
+      
+      // Animation d'erreur plus fun
       document.querySelector('.card').classList.add('shake');
       setTimeout(() => {
         document.querySelector('.card').classList.remove('shake');
-      }, 400);
+      }, 600);
     }
     
     // Focus pour mobile
@@ -426,11 +673,42 @@
     }
   }
 
+  function createCelebration() {
+    for(let i = 0; i < 15; i++) {
+      setTimeout(() => {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+          position: fixed;
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          width: 8px;
+          height: 8px;
+          background: ${['#f1c40f', '#9d4edd', '#86c08a'][Math.floor(Math.random() * 3)]};
+          border-radius: 50%;
+          pointer-events: none;
+          animation: celebrate 2s ease-out forwards;
+          z-index: 1000;
+        `;
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 2000);
+      }, i * 100);
+    }
+  }
+
   function markCompleted(index){
     const item = document.getElementById('progress_' + index);
     if(item) {
       item.classList.add('completed');
-      item.textContent = '✓';
+      item.textContent = '🗝️';
+      
+      // Animation de succès
+      setTimeout(() => {
+        item.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          item.style.transform = 'scale(1.1)';
+        }, 200);
+      }, 100);
     }
   }
 
@@ -438,12 +716,27 @@
     if(stage < 0) stage = 0;
     if(stage > MAX_STAGE) stage = MAX_STAGE;
     
-    const blur = blurLevels[stage] ?? 0;
-    const bright = 0.78 + (MAX_STAGE - stage) * 0.04;
+    if(stage === 0) {
+      // Image finale complètement claire, AUCUN filtre
+      img.classList.add('revealed');
+      img.style.filter = 'none';
+      img.style.webkitFilter = 'none';
+      img.style.transform = 'none';
+      img.style.transition = 'none';
+      // Forcer la suppression de tous les attributs de style liés aux filtres
+      img.removeAttribute('style');
+      img.classList.add('revealed');
+    } else {
+      img.classList.remove('revealed');
+      const blur = blurLevels[stage] ?? 0;
+      const bright = 0.6 + (MAX_STAGE - stage) * 0.1;
+      const contrast = 0.9 + (MAX_STAGE - stage) * 0.05;
+      const sepia = Math.max(0, 0.3 - (MAX_STAGE - stage) * 0.06);
+      
+      img.style.filter = `blur(${blur}px) brightness(${bright}) contrast(${contrast}) sepia(${sepia})`;
+    }
     
-    img.style.filter = `blur(${blur}px) brightness(${bright}) contrast(.98)`;
     stageLabel.textContent = `${stage}/${MAX_STAGE}`;
-    
     overlay.style.display = (stage === 0) ? "flex" : "none";
   }
 
@@ -454,13 +747,12 @@
       // Jeu terminé - masquer les contrôles
       document.querySelector('.current-step').style.display = 'none';
       document.querySelector('.controls').style.display = 'none';
-      hintBtn.style.display = 'none';
       return;
     }
     
     if(nextIndex < STEPS.length){
-      stepNumber.textContent = `Mot ${nextIndex + 1}/${STEPS.length}`;
-      currentRiddle.textContent = `Cherchez le mot n°${nextIndex + 1} dans le message de  Gary, Ben et Dracula...`;
+      stepNumber.textContent = `Clé ${nextIndex + 1}/${STEPS.length}`;
+      currentRiddle.textContent = stageMessages[nextIndex] || `Cherchez le mot n°${nextIndex + 1} dans le message...`;
       
       // Mise à jour des indicateurs de progression
       for(let i = 0; i < STEPS.length; i++){
@@ -476,8 +768,18 @@
   }
 
   function normalize(s){
-    return (s||'').toLowerCase().trim().replace(/\s+/g,'');
+    return (s||'').toLowerCase().trim().replace(/\s+/g,'').replace(/[àáâäãå]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôöõ]/g,'o').replace(/[ùúûü]/g,'u').replace(/[ç]/g,'c').replace(/[ñ]/g,'n');
   }
+
+  // Style pour l'animation de célébration
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes celebrate {
+      0% { transform: scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: scale(0) rotate(720deg); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
 })();
 </script>
 </body>
