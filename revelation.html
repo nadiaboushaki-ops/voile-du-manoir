@@ -3,487 +3,333 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Le Voile du Manoir — Énigme Finale</title>
-<meta name="description" content="Trouve les 5 clés dans l'ordre pour lever le voile et révéler la photo." />
+<title>Le Voile du Manoir</title>
 <style>
   :root{
-    --bg:#0e0f11; --panel:rgba(255,255,255,0.03); --accent:#86c08a;
-    --text:#eee; --muted:#bdbdbd; --ok:#55d67a; --warn:#ffba4a; --err:#ff6b6b;
-    --purple: #9d4edd; --gold: #f1c40f;
+    --accent:#86c08a;
+    --gold:#f1c40f;
+    --text:#eee;
   }
   *{box-sizing:border-box}
-  html,body{height:100%; margin:0; font-family:Inter,system-ui,Segoe UI,Arial,sans-serif; background:radial-gradient(1200px 700px at 50% -10%, #1a1b1e, #0b0c0e 70%); color:var(--text); overflow-x:hidden}
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:system-ui,-apple-system,sans-serif;
+    background:linear-gradient(135deg,#0a0e27 0%,#1a1033 100%);
+    color:var(--text);
+  }
   
-  .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:12px}
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    gap:16px;
+  }
   
-  /* Mobile-first design */
   .card{
-    width:100%; 
-    max-width:420px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2)); 
-    border:1px solid rgba(255,255,255,0.06); 
-    border-radius:20px; 
-    box-shadow:0 25px 80px rgba(0,0,0,0.6); 
+    width:100%;
+    max-width:500px;
+    background:rgba(20,20,35,0.8);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px;
     overflow:hidden;
-    position: relative;
-  }
-  
-  .spooky-border {
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    background: linear-gradient(45deg, var(--purple), var(--gold), var(--accent), var(--purple));
-    background-size: 400% 400%;
-    animation: borderGlow 3s ease-in-out infinite;
-    z-index: -1;
-    opacity: 0.3;
-  }
-  
-  @keyframes borderGlow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    backdrop-filter:blur(10px);
   }
   
   .image-section{
     position:relative;
-    height:60vh;
-    min-height:300px;
-    max-height:500px;
-    background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32));
+    width:100%;
+    aspect-ratio:1;
+    background:linear-gradient(180deg,rgba(0,0,0,0.5),rgba(0,0,0,0.8));
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:16px;
   }
   
   .frame{
-    width:100%; 
-    height:100%; 
-    border-radius:16px; 
-    overflow:hidden; 
-    background:#111; 
-    position:relative; 
-    display:flex; 
-    align-items:center; 
+    width:95%;
+    height:95%;
+    border-radius:12px;
+    overflow:hidden;
+    background:#000;
+    position:relative;
+    display:flex;
+    align-items:center;
     justify-content:center;
-    border: 2px solid rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);
   }
   
   .frame img{
-    width:100%; 
-    height:100%; 
-    object-fit:contain; 
-    display:block; 
-    transition:filter 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1); 
-    filter: blur(30px) brightness(.6) contrast(.9) sepia(.3);
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    filter:blur(30px) brightness(0.5) contrast(0.9);
+    transition:filter 800ms ease-out;
   }
   
   .frame img.revealed{
-    object-fit:contain !important;
-    width:100% !important;
-    height:100% !important;
-    filter:none !important;
-    transform:none !important;
-    transition:none !important;
-    opacity:1 !important;
-    -webkit-filter:none !important;
+    filter:none!important;
   }
   
   .veil-counter{
-    position:absolute; 
-    right:16px; 
-    top:16px; 
-    background:rgba(0,0,0,0.8); 
-    padding:8px 12px; 
-    border-radius:25px; 
-    font-size:13px; 
-    font-weight:700;
-    color: var(--gold);
-    border: 1px solid rgba(241, 196, 15, 0.3);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  }
-  
-  .mystery-badge {
-    position:absolute; 
-    left:16px; 
-    top:16px; 
-    background:linear-gradient(135deg, var(--purple), #6a1b9a); 
-    padding:8px 12px; 
-    border-radius:25px; 
-    font-size:12px; 
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:rgba(0,0,0,0.9);
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
     font-weight:600;
-    color: white;
-    box-shadow: 0 4px 12px rgba(157, 78, 221, 0.4);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.9; }
-  }
-  
-  .content{padding:24px 20px 28px}
-  
-  h1{margin:0 0 12px; font-size:22px; letter-spacing:.5px; text-align:center; color: var(--gold); text-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);}
-  .lead{margin:0 0 24px; color:#d9d9d9; text-align:center; font-size:15px; line-height: 1.4;}
-  
-  .current-step{
-    background:linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(106, 27, 154, 0.05));
-    border:1px solid rgba(157, 78, 221, 0.3);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:24px;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .current-step::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--purple), var(--gold), var(--accent));
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
-  }
-  
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  
-  .step-number{
     color:var(--gold);
-    font-weight:700;
-    font-size:15px;
-    margin-bottom:10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    border:1px solid rgba(241,196,15,0.5);
   }
   
-  .step-number::before {
-    content: '🔍';
-    font-size: 16px;
+  .content{
+    padding:20px;
   }
   
-  .riddle{
-    font-size:17px;
-    line-height:1.5;
-    margin-bottom:0;
-    color:#f8f8f8;
-    font-weight: 500;
+  h1{
+    margin:0 0 8px;
+    font-size:20px;
+    text-align:center;
+    color:var(--gold);
   }
   
-  .controls{display:flex; gap:10px; margin-bottom:20px}
+  .step-info{
+    text-align:center;
+    font-size:13px;
+    color:#aaa;
+    margin-bottom:16px;
+  }
+  
+  .controls{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+  }
   
   input[type="text"]{
-    flex:1; 
-    padding:16px 18px; 
-    border-radius:14px; 
-    border:2px solid rgba(255,255,255,0.1); 
-    background:rgba(255,255,255,0.05); 
-    color:var(--text); 
+    flex:1;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:rgba(255,255,255,0.05);
+    color:var(--text);
+    font-size:15px;
     outline:none;
-    font-size:16px;
-    transition: all 0.3s ease;
+    transition:all 0.3s ease;
   }
-  
-  input::placeholder{color:#9aa0a6; font-style: italic;}
+  input::placeholder{
+  color:#ffba4a;  ← COULEUR DU PLACEHOLDER
+}
   input:focus{
-    border-color:var(--accent); 
-    box-shadow:0 0 0 3px rgba(134,192,138,0.2);
-    background:rgba(255,255,255,0.08);
+    border-color:var(--accent);
+    background:rgba(255,255,255,0.1);
+    box-shadow:0 0 0 2px rgba(134,192,138,0.2);
   }
   
   button{
-    padding:16px 20px; 
-    border-radius:14px; 
-    border:2px solid rgba(255,255,255,0.08); 
-    background:#313336; 
-    color:#fff; 
+    padding:14px 24px;
+    border-radius:12px;
+    border:none;
+    background:linear-gradient(135deg,var(--accent),#9cd5a0);
+    color:#08270f;
+    font-weight:700;
     cursor:pointer;
-    font-size:15px;
-    font-weight:600;
-    transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    font-size:14px;
+    transition:all 0.3s ease;
   }
   
-  button:hover{background:#404348; transform: translateY(-2px);}
-  button:active{transform: translateY(0) scale(0.98)}
-  
-  button.primary{
-    background:linear-gradient(135deg, var(--accent), #9cd5a0); 
-    color:#08270f; 
-    font-weight:700; 
-    border-color:transparent;
-    box-shadow: 0 6px 20px rgba(134, 192, 138, 0.3);
+  button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 15px rgba(134,192,138,0.4);
   }
   
-  button.primary:hover{
-    background:linear-gradient(135deg, #9cd5a0, var(--accent));
-    box-shadow: 0 8px 25px rgba(134, 192, 138, 0.4);
+  button:active{
+    transform:translateY(0) scale(0.98);
   }
   
   .feedback{
-    min-height:50px; 
-    font-size:15px; 
-    line-height:1.5;
-    padding:12px 16px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-    text-align: center;
-    font-weight: 500;
+    min-height:40px;
+    padding:10px;
+    border-radius:10px;
+    font-size:13px;
+    text-align:center;
+    font-weight:500;
+    margin-bottom:12px;
+    transition:all 0.3s ease;
   }
   
   .ok{
-    color:var(--ok); 
-    background: rgba(85, 214, 122, 0.1);
-    border: 1px solid rgba(85, 214, 122, 0.3);
-  } 
+    color:#55d67a;
+    background:rgba(85,214,122,0.1);
+    border:1px solid rgba(85,214,122,0.3);
+  }
+  
   .warn{
-    color:var(--warn);
-    background: rgba(255, 186, 74, 0.1);
-    border: 1px solid rgba(255, 186, 74, 0.3);
-  } 
+    color:#ffba4a;
+    background:rgba(255,186,74,0.1);
+    border:1px solid rgba(255,186,74,0.3);
+  }
+  
   .err{
-    color:var(--err);
-    background: rgba(255, 107, 107, 0.1);
-    border: 1px solid rgba(255, 107, 107, 0.3);
-  }
-  
-  .progress-container {
-    background: rgba(0,0,0,0.3);
-    border-radius: 16px;
-    padding: 20px;
-    margin: 20px 0;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  
-  .progress-title {
-    text-align: center;
-    color: var(--gold);
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    letter-spacing: 0.5px;
+    color:#ff6b6b;
+    background:rgba(255,107,107,0.1);
+    border:1px solid rgba(255,107,107,0.3);
   }
   
   .progress-grid{
-    display:grid; 
-    grid-template-columns:repeat(5, 1fr); 
-    gap:10px; 
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
   }
   
   .progress-item{
     aspect-ratio:1;
-    border:2px solid rgba(255,255,255,0.15);
-    border-radius:12px;
+    border:2px solid rgba(255,255,255,0.2);
+    border-radius:10px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:14px;
-    font-weight:700;
-    transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .progress-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
+    font-weight:600;
+    font-size:13px;
+    transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
   }
   
   .progress-item.completed{
-    background:linear-gradient(135deg, var(--ok), #4ade80);
-    border-color:var(--ok);
+    background:linear-gradient(135deg,#55d67a,#4ade80);
+    border-color:#55d67a;
     color:#0a3d14;
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(85, 214, 122, 0.4);
-  }
-  
-  .progress-item.completed::before {
-    transform: translateX(100%);
+    transform:scale(1.08);
   }
   
   .progress-item.current{
     border-color:var(--accent);
-    background:rgba(134,192,138,0.2);
-    transform: scale(1.05);
-    animation: currentGlow 2s ease-in-out infinite;
-  }
-  
-  @keyframes currentGlow {
-    0%, 100% { box-shadow: 0 0 10px rgba(134,192,138,0.3); }
-    50% { box-shadow: 0 0 20px rgba(134,192,138,0.6); }
+    background:rgba(134,192,138,0.15);
+    transform:scale(1.05);
+    box-shadow:0 0 15px rgba(134,192,138,0.4);
   }
   
   .overlay-final{
-  position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-  /* pas de blur ici sinon ça floute l'image finale ! */
-  /* backdrop-filter: blur(2px);  <-- SUPPRIMÉ */
-  background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.85));
-  color:#fff; text-align:center; padding:24px;
-}
-
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,0.4) 60%,rgba(0,0,0,0.9));
+    color:#fff;
+    text-align:center;
+    padding:20px;
+  }
   
   .overlay-final .title{
-    font-size:20px; 
-    margin-bottom:12px; 
+    font-size:28px;
     font-weight:700;
-    color: var(--gold);
-    text-shadow: 0 2px 10px rgba(241, 196, 15, 0.5);
+    color:var(--gold);
+    text-shadow:0 2px 10px rgba(241,196,15,0.5);
+    margin-bottom:16px;
   }
-  .overlay-final .subtitle{
-    font-size:15px; 
-    color:#ddd; 
-    margin-bottom:20px;
-    line-height: 1.4;
-  }
+  
   .overlay-final .download{
-    padding:14px 24px; 
-    border-radius:12px; 
-    background:linear-gradient(135deg, var(--accent), #9cd5a0); 
-    color:#08270f; 
-    font-weight:800; 
-    border:none; 
+    padding:12px 20px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),#9cd5a0);
+    color:#08270f;
+    font-weight:700;
+    border:none;
     cursor:pointer;
-    font-size:15px;
-    box-shadow: 0 6px 20px rgba(134, 192, 138, 0.4);
-    transition: all 0.3s ease;
+    font-size:14px;
+    transition:all 0.3s ease;
   }
   
-  .overlay-final .download:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(134, 192, 138, 0.5);
+  .overlay-final .download:hover{
+    transform:translateY(-2px);
   }
   
-  /* Tablet et Desktop */
-  @media (min-width:768px){
-    .wrap{padding:28px}
-    .card{
-      max-width:900px;
-      display:grid;
-      grid-template-columns:1fr 1.2fr;
-    }
-    .image-section{height:auto; min-height:500px}
-    .content{padding:36px 32px}
-    h1{font-size:26px; text-align:left}
-    .lead{text-align:left; font-size:16px}
-    .riddle{font-size:18px}
-  }
-  
-  @media (min-width:1024px){
-    .card{max-width:1100px}
-    .content{padding:40px 36px}
-  }
-  
-  /* Amélioration tactile */
-  @media (hover: none) and (pointer: coarse) {
-    button, input{min-height:48px}
-    .frame{touch-action:none}
-    .progress-item{min-height:48px}
-  }
-  
-  /* Animation d'erreur plus fun */
   .shake{
-    animation:spookyShake 0.6s ease-in-out;
+    animation:shake 0.4s ease-in-out;
   }
   
-  @keyframes spookyShake{
-    0%, 100%{transform:translateX(0) rotate(0deg)}
-    20%{transform:translateX(-8px) rotate(-1deg)}
-    40%{transform:translateX(8px) rotate(1deg)}
-    60%{transform:translateX(-6px) rotate(-0.5deg)}
-    80%{transform:translateX(6px) rotate(0.5deg)}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
   }
   
-  /* Effet de particules */
-  .particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--gold);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: float 3s linear infinite;
+  @media (hover:none){
+    button,input{min-height:48px}
   }
-  
-  @keyframes float {
-    0% {
-      transform: translateY(100vh) rotate(0deg);
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-100px) rotate(360deg);
-      opacity: 0;
-    }
-  }
+  /* --- Forcer l'écriture en BLANC dans le champ, tout le temps --- */
+input[type="text"],
+input[type="search"],
+input[type="text"]:focus,
+input[type="search"]:focus {
+  color: #ffffff !important;     /* texte blanc */
+  caret-color: #ffffff !important;/* curseur blanc */
+  background: rgba(255,255,255,0.08) !important; /* fond sombre lisible au focus */
+  -webkit-text-fill-color: #ffffff !important;   /* Safari/Chrome */
+}
+
+/* Placeholder lisible mais discret (orange pâle) */
+input::placeholder {
+  color: #ffba4a !important;
+  opacity: 0.9;
+}
+
+/* Cas "autofill" (suggestions/auto-complétion Safari/Chrome) */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff !important;   /* texte blanc */
+  caret-color: #ffffff !important;
+  transition: background-color 9999s ease-in-out 0s !important; /* évite l'overlay jaune */
+  box-shadow: 0 0 0px 1000px rgba(255,255,255,0.08) inset !important; /* garde un fond sombre */
+}
+
+/* Indique au navigateur qu'on est en thème sombre (iOS/Android) */
+:root, body {
+  color-scheme: dark;
+}
+
 </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card" role="main" aria-labelledby="title">
-      <div class="spooky-border"></div>
-      
+    <div class="card" role="main">
       <div class="image-section">
-        <div class="frame" aria-hidden="false">
-          <div class="mystery-badge">🎭 Mystère</div>
+        <div class="frame">
           <div class="veil-counter">Voiles: <span id="stage">5/5</span></div>
-          <img id="revealImg" src="./dracula_revelation.png" alt="Le visage caché du Manoir" />
+          <img id="revealImg" src="./dracula_revelation.png" alt="Photo mystère" />
           <div class="overlay-final" id="finalOverlay" aria-hidden="true">
             <div>
-              <div class="title">🎉 Révélation complète !</div>
-              <button class="download" id="dlBtn" type="button">📥 Télécharger votre trophée</button>
+              <div class="title">🎉 Révélé !</div>
+              <button class="download" id="dlBtn">📥 Télécharger</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="content">
-        <h1 id="title">🏰 Le Voile du Manoir</h1>
-        <p class="lead">Trouvez les 5 mots cachés dans le message de remerciement pour lever le voile mystérieux...</p>
+        <h1>🔮 Voile du Manoir</h1>
+        
+        <div id="feedback" class="feedback" style="display:none"></div>
+        
+        <div class="step-info" id="stepInfo">Clé 1/5</div>
 
-        <div class="current-step" id="currentStep">
-          <div class="step-number" id="stepNumber">Clé 1/5</div>
-          <div class="riddle" id="currentRiddle">Cherchez le premier mot dans le message de Gary, Ben et Dracula...</div>
-        </div>
-
-        <div class="controls" aria-live="polite">
-          <input id="pwd" autocomplete="off" spellcheck="false" placeholder="Entrez votre réponse..." />
-          <button id="tryBtn" class="primary">🔮 Révéler</button>
+        <div class="controls">
+          <input id="pwd" autocomplete="off" spellcheck="false" placeholder="Votre réponse..." />
+          <button id="tryBtn">Révéler</button>
         </div>
         
-        <div id="feedback" class="feedback">Lisez attentivement le message de remerciement pour trouver le premier mot !</div>
-
-        <div class="progress-container">
-          <div class="progress-title">🗝️ Progression des Clés</div>
-          <div class="progress-grid" id="progressGrid">
-            <!-- Généré par JS -->
-          </div>
-        </div>
+        <div class="progress-grid" id="progressGrid"></div>
       </div>
-
     </div>
   </div>
 
 <script>
 (function(){
-  // 5 mots à trouver dans le texte de remerciement
   const STEPS = [
     { key:'souffle' },
     { key:'rire' },
@@ -494,6 +340,7 @@
 
   const MAX_STAGE = STEPS.length;
   let stage = MAX_STAGE;
+  
   const img = document.getElementById('revealImg');
   const stageLabel = document.getElementById('stage');
   const feedback = document.getElementById('feedback');
@@ -501,27 +348,14 @@
   const tryBtn = document.getElementById('tryBtn');
   const overlay = document.getElementById('finalOverlay');
   const dlBtn = document.getElementById('dlBtn');
-  const stepNumber = document.getElementById('stepNumber');
-  const currentRiddle = document.getElementById('currentRiddle');
+  const stepInfo = document.getElementById('stepInfo');
   const progressGrid = document.getElementById('progressGrid');
 
-  // Niveaux de flou selon le stage - plus dramatique
   const blurLevels = [0, 8, 16, 24, 32, 40];
-  
-  // Messages plus immersifs
-  const stageMessages = [
-    "Cherchez le premier mot dans le message de Gary, Ben et Dracula...",
-    "Le deuxième mot vous attend dans leurs remerciements...",
-    "Continuez votre quête, le troisième mot se cache...",
-    "Presque là ! Le quatrième mot attend d'être découvert...",
-    "Dernière étape ! Le cinquième mot révélera tout..."
-  ];
 
-  // Initialisation
   init();
 
   function init(){
-    // Créer la grille de progression
     for(let i = 0; i < STEPS.length; i++){
       const item = document.createElement('div');
       item.className = 'progress-item';
@@ -529,186 +363,91 @@
       item.id = 'progress_' + i;
       progressGrid.appendChild(item);
     }
-    
-    // Ajouter des particules d'ambiance
-    createParticles();
-    
     updateVisual();
     updateUI();
     input.focus();
   }
 
-  function createParticles() {
-    for(let i = 0; i < 5; i++) {
-      setTimeout(() => {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 3 + 's';
-        document.body.appendChild(particle);
-        
-        setTimeout(() => particle.remove(), 3000);
-      }, i * 1000);
-    }
-    
-    // Relancer les particules
-    setTimeout(createParticles, 15000);
-  }
-
-  // Événements
   tryBtn.addEventListener('click', onTry);
   input.addEventListener('keydown', (e)=>{ 
-    if(e.key === 'Enter'){ 
-      onTry(); 
-    }
+    if(e.key === 'Enter') onTry(); 
   });
 
-  // Téléchargement
   dlBtn.addEventListener('click', ()=>{
     const a = document.createElement('a');
-    a.href = img.currentSrc || img.src; 
-    a.download = 'dracula_revelation_trophee.png';
-    document.body.appendChild(a); 
-    a.click(); 
+    a.href = img.currentSrc || img.src;
+    a.download = 'photo_revelée.png';
+    document.body.appendChild(a);
+    a.click();
     a.remove();
-    
-    // Petit feedback
     dlBtn.textContent = '✅ Téléchargé !';
     setTimeout(() => {
-      dlBtn.textContent = '📥 Télécharger votre trophée';
+      dlBtn.textContent = '📥 Télécharger';
     }, 2000);
   });
 
-  // Gestion erreur image
   img.addEventListener('error', ()=>{
     const warn = document.createElement('div');
-    warn.style.cssText="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1acc;color:#fff;padding:20px;text-align:center;font-size:14px;line-height:1.4;border-radius:16px";
-    warn.innerHTML="⚠️ Image introuvable<br>Placez 'dracula_revelation.png' dans le même dossier";
+    warn.style.cssText = "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1a;color:#fff;font-size:13px;text-align:center;padding:20px;border-radius:12px";
+    warn.innerHTML = "⚠️ Image non trouvée<br>Placez 'dracula_revelation.png' ici";
     img.closest('.frame').appendChild(warn);
   });
 
   function onTry(){
-    const raw = input.value;
-    const val = normalize(raw);
-    input.value='';
+    const val = normalize(input.value);
+    input.value = '';
 
     const expectedIndex = STEPS.length - stage;
     const expected = STEPS[expectedIndex]?.key;
 
-    if(!val){ 
-      feedback.innerHTML = `<span class="warn">🤔 Entrez votre réponse d'abord, petit monstre !</span>`; 
-      feedback.className = 'feedback warn';
-      return; 
+    if(!val){
+      showFeedback('Entrez votre réponse !', 'warn');
+      return;
     }
-    
-    if(!expected){ 
-      feedback.innerHTML = `<span class="ok">🎉 Tout est déjà révélé ! Bravo !</span>`;
-      feedback.className = 'feedback ok';
-      return; 
+
+    if(!expected){
+      showFeedback('Jeu terminé ! 🎉', 'ok');
+      return;
     }
 
     if(val === expected){
       markCompleted(expectedIndex);
-      if(stage > 0){ stage--; }
-      updateVisual(); 
+      if(stage > 0) stage--;
+      updateVisual();
       updateUI();
 
       if(stage === 0){
-        feedback.innerHTML = `<span class="ok">✨ <strong>Extraordinaire !</strong> Tous les mots trouvés ! Le mystère est résolu ! 🎭</span>`;
-        feedback.className = 'feedback ok';
-        overlay.style.display = "flex";
-        
-        // Animation finale dramatique - image complètement claire
-        setTimeout(() => {
-          img.removeAttribute('style'); // Supprimer TOUS les styles inline
-          img.classList.add('revealed'); // Appliquer la classe finale
-        }, 500);
-        
-        // Confettis virtuels
-        createCelebration();
-        
-        // Scroll vers l'image pour voir la révélation finale
-        setTimeout(() => {
-          document.querySelector('.image-section').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }, 300);
+        showFeedback('✨ Tous les mots trouvés ! ✨', 'ok');
+        overlay.style.display = 'flex';
+        img.classList.add('revealed');
       } else {
         const remaining = stage;
-        feedback.innerHTML = `<span class="ok">🔓 <strong>Parfait !</strong> <span style="color: white; font-weight: bold;">"${expected}"</span> trouvé ! Plus que ${remaining} voile${remaining > 1 ? 's' : ''} à lever... 🌟</span>`;
-        feedback.className = 'feedback ok';
-        
-        // Scroll vers l'image pour voir le voile se lever
-        setTimeout(() => {
-          document.querySelector('.image-section').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }, 300);
-        
-        // Retour au formulaire après avoir vu l'effet
-        setTimeout(() => {
-          document.querySelector('.current-step').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-          input.focus();
-        }, 2000);
+        showFeedback(`"${expected}" ✓ | ${remaining} voile${remaining > 1 ? 's' : ''} restant${remaining > 1 ? 's' : ''}`, 'ok');
+        setTimeout(() => input.focus(), 300);
       }
     } else {
-      feedback.innerHTML = `<span class="err">❌ Ce n'est pas le bon mot... Relisez le message de remerciement ! 🔍</span>`;
-      feedback.className = 'feedback err';
-      
-      // Animation d'erreur plus fun
+      showFeedback('Pas le bon mot... Cherchez dans le texte !', 'err');
       document.querySelector('.card').classList.add('shake');
       setTimeout(() => {
         document.querySelector('.card').classList.remove('shake');
-      }, 600);
-    }
-    
-    // Focus pour mobile
-    if(stage > 0){
-      setTimeout(() => input.focus(), 100);
+      }, 400);
     }
   }
 
-  function createCelebration() {
-    for(let i = 0; i < 15; i++) {
-      setTimeout(() => {
-        const particle = document.createElement('div');
-        particle.style.cssText = `
-          position: fixed;
-          left: ${Math.random() * 100}%;
-          top: ${Math.random() * 100}%;
-          width: 8px;
-          height: 8px;
-          background: ${['#f1c40f', '#9d4edd', '#86c08a'][Math.floor(Math.random() * 3)]};
-          border-radius: 50%;
-          pointer-events: none;
-          animation: celebrate 2s ease-out forwards;
-          z-index: 1000;
-        `;
-        document.body.appendChild(particle);
-        
-        setTimeout(() => particle.remove(), 2000);
-      }, i * 100);
-    }
+  function showFeedback(msg, type){
+    feedback.textContent = msg;
+    feedback.className = 'feedback ' + type;
+    feedback.style.display = 'block';
+    setTimeout(() => {
+      feedback.style.display = 'none';
+    }, 4000);
   }
 
   function markCompleted(index){
     const item = document.getElementById('progress_' + index);
-    if(item) {
+    if(item){
       item.classList.add('completed');
-      item.textContent = '🗝️';
-      
-      // Animation de succès
-      setTimeout(() => {
-        item.style.transform = 'scale(1.2)';
-        setTimeout(() => {
-          item.style.transform = 'scale(1.1)';
-        }, 200);
-      }, 100);
+      item.textContent = '✓';
     }
   }
 
@@ -716,20 +455,12 @@
     if(stage < 0) stage = 0;
     if(stage > MAX_STAGE) stage = MAX_STAGE;
     
-    if(stage === 0) {
-      // Image finale complètement claire, AUCUN filtre
-      img.classList.add('revealed');
-      img.style.filter = 'none';
-      img.style.webkitFilter = 'none';
-      img.style.transform = 'none';
-      img.style.transition = 'none';
-      // Forcer la suppression de tous les attributs de style liés aux filtres
-      img.removeAttribute('style');
+    if(stage === 0){
       img.classList.add('revealed');
     } else {
       img.classList.remove('revealed');
       const blur = blurLevels[stage] ?? 0;
-      const bright = 0.6 + (MAX_STAGE - stage) * 0.1;
+      const bright = 0.5 + (MAX_STAGE - stage) * 0.12;
       const contrast = 0.9 + (MAX_STAGE - stage) * 0.05;
       const sepia = Math.max(0, 0.3 - (MAX_STAGE - stage) * 0.06);
       
@@ -737,49 +468,35 @@
     }
     
     stageLabel.textContent = `${stage}/${MAX_STAGE}`;
-    overlay.style.display = (stage === 0) ? "flex" : "none";
+    overlay.style.display = (stage === 0) ? 'flex' : 'none';
   }
 
   function updateUI(){
     const nextIndex = STEPS.length - stage;
     
     if(stage === 0){
-      // Jeu terminé - masquer les contrôles
-      document.querySelector('.current-step').style.display = 'none';
-      document.querySelector('.controls').style.display = 'none';
-      return;
+      document.querySelector('.step-info').textContent = 'Challenge terminé !';
+    } else {
+      stepInfo.textContent = `Clé ${nextIndex + 1}/${STEPS.length}`;
     }
     
-    if(nextIndex < STEPS.length){
-      stepNumber.textContent = `Clé ${nextIndex + 1}/${STEPS.length}`;
-      currentRiddle.textContent = stageMessages[nextIndex] || `Cherchez le mot n°${nextIndex + 1} dans le message...`;
+    for(let i = 0; i < STEPS.length; i++){
+      const item = document.getElementById('progress_' + i);
+      if(!item) continue;
       
-      // Mise à jour des indicateurs de progression
-      for(let i = 0; i < STEPS.length; i++){
-        const item = document.getElementById('progress_' + i);
-        if(!item) continue;
-        
-        item.classList.remove('current');
-        if(i === nextIndex && stage > 0){
-          item.classList.add('current');
-        }
+      item.classList.remove('current');
+      if(i === nextIndex && stage > 0){
+        item.classList.add('current');
       }
     }
   }
 
   function normalize(s){
-    return (s||'').toLowerCase().trim().replace(/\s+/g,'').replace(/[àáâäãå]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i').replace(/[òóôöõ]/g,'o').replace(/[ùúûü]/g,'u').replace(/[ç]/g,'c').replace(/[ñ]/g,'n');
+    return (s||'').toLowerCase().trim().replace(/\s+/g,'')
+      .replace(/[àáâäãå]/g,'a').replace(/[èéêë]/g,'e')
+      .replace(/[ìíîï]/g,'i').replace(/[òóôöõ]/g,'o')
+      .replace(/[ùúûü]/g,'u').replace(/[ç]/g,'c').replace(/[ñ]/g,'n');
   }
-
-  // Style pour l'animation de célébration
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes celebrate {
-      0% { transform: scale(1) rotate(0deg); opacity: 1; }
-      100% { transform: scale(0) rotate(720deg); opacity: 0; }
-    }
-  `;
-  document.head.appendChild(style);
 })();
 </script>
 </body>
